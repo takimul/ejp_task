@@ -183,40 +183,42 @@
 
 // export default LoginPage;
 
-"use client";  // Add this to make sure the component is client-side
+
+"use client"; // Ensure that the component is only rendered on the client
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import useLoggedUser from "@/Hooks/useLoggedUser";  // Custom hook to manage user session
+import useLoggedUser from "@/Hooks/useLoggedUser"; // Custom hook to manage user session
 
 const LoginPage = () => {
   const { register, handleSubmit } = useForm();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);  // Track if we're on the client side
-  const [isSubmitting, setIsSubmitting] = useState(false);  // Track form submission state
-  const [errorMessage, setErrorMessage] = useState("");  // Track login errors
+  const [isClient, setIsClient] = useState(false); // Track if we're on the client side
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track form submission state
+  const [errorMessage, setErrorMessage] = useState(""); // Track login errors
 
-  const { user, status } = useLoggedUser();  // Get user info and authentication status
+  const { user, status } = useLoggedUser(); // Get user info and authentication status
 
   // Set isClient to true once the component is mounted on the client side
   useEffect(() => {
-    setIsClient(true); 
+    setIsClient(true);
   }, []);
 
+  // Ensure that we don’t try to access the session before the component is mounted
   const authenticated = status === "authenticated";
 
   // Redirect to home if already authenticated
   useEffect(() => {
     if (authenticated) {
-      router.push("/");  // Redirect to homepage if authenticated
+      router.push("/"); // Redirect to homepage if authenticated
     }
   }, [authenticated, router]);
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true);  // Start submitting the form
-    setErrorMessage("");  // Reset error message
+    setIsSubmitting(true); // Start submitting the form
+    setErrorMessage(""); // Reset error message
     const { email, password } = data;
 
     const res = await signIn("credentials", {
@@ -226,16 +228,16 @@ const LoginPage = () => {
     });
 
     if (res?.error) {
-      setErrorMessage(res.error);  // Set error message if login fails
+      setErrorMessage(res.error); // Set error message if login fails
     } else {
-      router.push("/");  // Redirect to homepage on successful login
+      router.push("/"); // Redirect to homepage on successful login
     }
-    setIsSubmitting(false);  // Stop submitting
+    setIsSubmitting(false); // Stop submitting
   };
 
   // Prevent rendering until client-side is ready
   if (!isClient) {
-    return null;  // Optionally render a loading spinner or skeleton loader
+    return null; // Optionally render a loading spinner or skeleton loader
   }
 
   return (
