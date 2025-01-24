@@ -2,10 +2,10 @@
 // import MainLayout from "@/Layout/MainLayout";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useLoggedUser from "@/Hooks/useLoggedUser";
-import SocialLogin from "@/components/SocialLogin/SocialLogin";
+// import SocialLogin from "@/components/SocialLogin/SocialLogin";
 // import SocialLogin from "@/Components/SocialLogin/SocialLogin";
 
 const LoginPage = () => {
