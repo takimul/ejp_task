@@ -48,23 +48,15 @@ const handler = NextAuth({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
     }),
-    GitHubProvider({
-      clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-      clientSecret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
-    }),
-    FacebookProvider({
-      clientId: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET,
-    }),
+  
+    
   ],
   
 
   callbacks: {
     async signIn({ user, account, profile, email }) {
       if (
-        account.provider === "google" ||
-        account.provider === "github" ||
-        account.provider === "facebook"
+        account.provider === "google"
       ) {
         const { email } = user;
         try {
