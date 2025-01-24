@@ -295,37 +295,55 @@
 
 //last try
 
-"use client";  // Explicitly mark this as a client-side component
+"use client";  // Explicitly mark this as client-side
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import useLoggedUser from "@/Hooks/useLoggedUser";
+
+// Custom hook for handling authentication
+const useLoggedUser = () => {
+  const [isClient, setIsClient] = useState(false); // Track client-side rendering
+  const [user, setUser] = useState(null);  // Track the user state
+  const [status, setStatus] = useState("loading"); // Track the status of authentication
+
+  // useEffect to ensure this code runs only on the client side
+  useEffect(() => {
+    setIsClient(true); // Set client-side flag
+    // Simulate a check for user session here
+    const checkUserSession = async () => {
+      const session = await fetch("/api/auth/session").then(res => res.json()); // Fetch session info from API
+      if (session?.user) {
+        setUser(session.user);
+        setStatus("authenticated");
+      } else {
+        setStatus("unauthenticated");
+      }
+    };
+    checkUserSession();
+  }, []);
+
+  return { user, status };
+};
 
 const LoginPage = () => {
   const { register, handleSubmit } = useForm();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false); // State to track if the component has mounted
-  const { user, status } = useLoggedUser();  // Only use `useLoggedUser` once the component is client-side
-  const [isSubmitting, setIsSubmitting] = useState(false);  // Track submission state
-  const [errorMessage, setErrorMessage] = useState("");  // Track error messages
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const { user, status } = useLoggedUser();  // Get user status
 
   useEffect(() => {
-    setIsClient(true);  // Set to true once the component is mounted (client-side)
-  }, []);
-
-  const authenticated = status === "authenticated";
-
-  useEffect(() => {
-    if (authenticated) {
-      router.push("/"); // Redirect to homepage if authenticated
+    if (status === "authenticated") {
+      router.push("/"); // Redirect to home if authenticated
     }
-  }, [authenticated, router]);
+  }, [status, router]);
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    setErrorMessage(""); // Reset errors before submission
+    setErrorMessage(""); // Reset error message
 
     const { email, password } = data;
     const res = await signIn("credentials", { email, password, redirect: false });
@@ -338,8 +356,8 @@ const LoginPage = () => {
     setIsSubmitting(false);
   };
 
-  // Ensure we only render once we're client-side
-  if (!isClient) {
+  // Ensure that the page only renders on the client side
+  if (status === "loading") {
     return null; // Optionally show a loading spinner or skeleton loader
   }
 
@@ -390,5 +408,6 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
 
 

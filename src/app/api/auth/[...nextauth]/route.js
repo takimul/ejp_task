@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import FacebookProvider from "next-auth/providers/facebook";
+
 import { connectDb } from "@/services/connectDB";
 // import { connectDb } from "@/Services/connectDb";
 
