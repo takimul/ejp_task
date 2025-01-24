@@ -68,7 +68,7 @@ export const middleware = async (request) => {
   try {
     // Await the cookies call for Edge runtime
     const cookieStore = await cookies();  // `await` here to fix the error
-    const token = cookieStore.get("next-auth.session-token");  // Access the session token
+    const token = cookieStore.get("__Secure-next-auth.session-token");  // Access the session token
     const pathname = request.nextUrl.pathname;
 
     console.log("Cookies:", cookieStore.getAll());  // Log all cookies for debugging
